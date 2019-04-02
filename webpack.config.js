@@ -14,12 +14,14 @@ function getEntryFileContent(entryPath, vueFilePath) {
   let contents = '';
   if (hasPluginInstalled) {
     const plugindir = pathTo.resolve('./web/plugin.js');
-    contents = 'require(\'' + plugindir + '\') \n';
+    // contents = 'require(\'' + plugindir + '\') \n';
+    contents = 'import \'' + plugindir + '\'\n';
   }
   if (isWin) {
     relativePath = relativePath.replace(/\\/g,'\\\\');
   }
-  contents += 'var App = require(\'' + relativePath + '\')\n';
+  // contents += 'var App = require(\'' + relativePath + '\')\n';
+  contents += 'import App from\'' + relativePath + '\'\n';
   contents += 'App.el = \'#root\'\n';
   contents += 'new Vue(App)\n';
   return contents;
@@ -63,7 +65,7 @@ walk();
 const plugins = [
   new webpack.optimize.UglifyJsPlugin({minimize: true}),
   new webpack.BannerPlugin({
-    banner: '// { "framework": ' + (fileType === '.vue' ? '"Vue"' : '"Weex"') + '} \n',
+    banner: '// { "framework": "Weex" } \n',
     raw: true,
     exclude: 'Vue'
   })
@@ -119,12 +121,6 @@ const weexConfig = {
             },
             {
                 test: /\.vue(\?[^?]+)?$/,
-                use: [{
-                    loader: 'weex-loader'
-                }]
-            },
-            {
-                test: /\.we(\?[^?]+)?$/,
                 use: [{
                     loader: 'weex-loader'
                 }]
